@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Bajo — Plan Semanal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --accent: #c8a97e;
+    --accent2: #7eb8c8;
+    --text: #e8e2d9;
+    --muted: #6b6560;
+    --done: #4a7c5e;
+    --done-bg: #1a2e24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 48px 32px 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '𝄢';
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    font-size: 180px;
+    opacity: 0.04;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .header-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .header-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 12px;
+  }
+
+  .week-progress {
+    margin-top: 24px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .week-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .week-dot.done { background: var(--accent); }
+  .week-label { font-size: 10px; color: var(--muted); margin-left: 8px; }
+
+  /* NAV DAYS */
+  .nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+
+  .nav-btn {
+    flex: none;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .nav-btn:hover { color: var(--text); }
+
+  .nav-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .nav-btn .done-mark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--done);
+    display: none;
+  }
+
+  .nav-btn.completed .done-mark { display: block; }
+
+  /* CONTENT */
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  .day-panel { display: none; animation: fadeIn 0.25s ease; }
+  .day-panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .day-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    gap: 16px;
+  }
+
+  .day-number {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .day-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .day-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .duration-badge {
+    flex: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .duration-badge span {
+    display: block;
+    font-size: 18px;
+    font-family: 'DM Serif Display', serif;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  /* OBJECTIVE */
+  .objective-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+
+  .objective-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .objective-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    font-weight: 300;
+  }
+
+  /* STEPS */
+  .steps-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .step-body { flex: 1; }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .step-desc {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .step-desc strong {
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  /* RULE BLOCK */
+  .rule-block {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .rule-icon { font-size: 20px; flex: none; }
+
+  .rule-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .rule-text strong {
+    display: block;
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  /* DONE BUTTON */
+  .done-btn {
+    width: 100%;
+    margin-top: 32px;
+    padding: 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .done-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .done-btn.completed {
+    background: var(--done-bg);
+    border-color: var(--done);
+    color: var(--done);
+  }
+
+  /* PRINCIPLE BLOCK */
+  .principle {
+    margin-top: 28px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    text-align: center;
+  }
+
+  .principle-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .principle-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(16px, 3vw, 22px);
+    font-style: italic;
+    color: var(--accent);
+    line-height: 1.4;
+  }
+
+  /* RESUMEN TAB */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 500px) {
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .summary-card:hover { border-color: var(--accent); }
+  .summary-card.completed { border-color: var(--done); background: var(--done-bg); }
+
+  .sc-day {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .sc-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .sc-focus {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .sc-time {
+    margin-top: 10px;
+    font-size: 10px;
+    color: var(--accent);
+  }
+
+  .sc-check {
+    float: right;
+    color: var(--done);
+    font-size: 16px;
+  }
+
+  .target-block {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 8px;
+  }
+
+  .target-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .target-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .target-row:last-child { border-bottom: none; }
+  .target-row-label { color: var(--muted); }
+  .target-row-value { color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">MacroConsulting · Práctica personal</div>
+  <div class="header-title">Plan <em>Auditivo</em><br>de Bajo</div>
+  <div class="header-sub">15–20 min diarios · Adicional a tu rutina</div>
+  <div class="week-progress">
+    <div class="week-dot" id="dot-0"></div>
+    <div class="week-dot" id="dot-1"></div>
+    <div class="week-dot" id="dot-2"></div>
+    <div class="week-dot" id="dot-3"></div>
+    <div class="week-dot" id="dot-4"></div>
+    <div class="week-dot" id="dot-5"></div>
+    <div class="week-dot" id="dot-6"></div>
+    <span class="week-label" id="week-label">0 / 7 días</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showDay(0)" id="nav-0">
+    Lun<div class="done-mark"></div>
+  </button>
+  <button class="nav-btn" onclick="showDay(1)" id="nav-1">
+    Mar<div class="done-mark"></div>
+  </button>
+  <button class="nav-btn" onclick="showDay(2)" id="nav-2">
+    Mié<div class="done-mark"></div>
+  </button>
+  <button class="nav-btn" onclick="showDay(3)" id="nav-3">
+    Jue<div class="done-mark"></div>
+  </button>
+  <button class="nav-btn" onclick="showDay(4)" id="nav-4">
+    Vie<div class="done-mark"></div>
+  </button>
+  <button class="nav-btn" onclick="showDay(5)" id="nav-5">
+    Sáb<div class="done-mark"></div>
+  </button>
+  <button class="nav-btn" onclick="showDay(6)" id="nav-6">
+    Dom<div class="done-mark"></div>
+  </button>
+  <button class="nav-btn" onclick="showDay(7)" id="nav-7">
+    Resumen<div class="done-mark"></div>
+  </button>
+</nav>
+
+<div class="content">
+
+  <!-- LUNES -->
+  <div class="day-panel active" id="day-0">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Día 1 · Lunes</div>
+        <div class="day-name">Drone <em>melódico</em></div>
+      </div>
+      <div class="duration-badge"><span>15</span>min</div>
+    </div>
+
+    <div class="objective-block">
+      <div class="objective-label">Objetivo</div>
+      <div class="objective-text">Construir el circuito oído → voz → mano. Que la voz haga de puente antes de que la mano toque.</div>
+    </div>
+
+    <div class="steps-label">Cómo hacerlo</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Buscá un drone de tónica</div>
+        <div class="step-desc">YouTube: buscá <strong>"A drone bass"</strong> o la tonalidad que quieras. Que suene durante todo el ejercicio.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Improvisá una melodía nota por nota</div>
+        <div class="step-desc">Muy lenta. Casi ridículamente lenta. No es una escala, es una melodía inventada en el momento.</div>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-icon">🔁</div>
+      <div class="rule-text">
+        <strong>Regla única</strong>
+        Para cada nota: escuchala en tu cabeza → intentala con la voz → tocala en el bajo. Siempre ese orden.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">No importa el desafine</div>
+        <div class="step-desc">La voz no tiene que ser afinada. Solo tiene que <strong>intentar antes que la mano</strong>. Eso es todo.</div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-label">Para recordar</div>
+      <div class="principle-text">"La incomodidad es la señal de que el cerebro está formando una conexión nueva."</div>
+    </div>
+
+    <button class="done-btn" id="btn-0" onclick="toggleDone(0)">Marcar como hecho</button>
+  </div>
+
+  <!-- MARTES -->
+  <div class="day-panel" id="day-1">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Día 2 · Martes</div>
+        <div class="day-name">Análisis de <em>línea</em></div>
+      </div>
+      <div class="duration-badge"><span>10</span>min</div>
+    </div>
+
+    <div class="objective-block">
+      <div class="objective-label">Objetivo</div>
+      <div class="objective-text">Ver en papel los patrones que ya tenés en el cuerpo. Nombrar lo que el oído ya sabe hacer.</div>
+    </div>
+
+    <div class="steps-label">Cómo hacerlo</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Elegí una línea que ya tengas incorporada</div>
+        <div class="step-desc">Por ejemplo "I Want You Back" de Felder. Cualquier cosa que ya te salga fluida.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">No la toques — solo escuchá</div>
+        <div class="step-desc">Ponés la canción (o el bajo aislado en Moises). Escuchás frase por frase.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Escribís los grados en papel</div>
+        <div class="step-desc">Nota por nota. En vez de "La-Sol-Fa#" escribís <strong>"1 - b7 - 6"</strong>. Un cuaderno específico para esto.</div>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-icon">📓</div>
+      <div class="rule-text">
+        <strong>Consejo</strong>
+        No hace falta terminar toda la línea. Una frase bien analizada vale más que cinco a medias.
+      </div>
+    </div>
+
+    <button class="done-btn" id="btn-1" onclick="toggleDone(1)">Marcar como hecho</button>
+  </div>
+
+  <!-- MIÉRCOLES -->
+  <div class="day-panel" id="day-2">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Día 3 · Miércoles</div>
+        <div class="day-name">Grado <em>del día</em></div>
+      </div>
+      <div class="duration-badge"><span>0</span>min<br><span style="font-size:9px;color:var(--muted)">extra</span></div>
+    </div>
+
+    <div class="objective-block">
+      <div class="objective-label">Objetivo</div>
+      <div class="objective-text">Automatizar el reconocimiento de un grado específico sin cambiar nada de la rutina. Solo agregás conciencia.</div>
+    </div>
+
+    <div class="steps-label">Cómo hacerlo</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Elegí un grado antes de empezar</div>
+        <div class="step-desc">El <strong>6</strong> es el mejor para empezar en soul. Después podés rotar: 2, b7, 3, b3.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Hacé tu rutina normal</div>
+        <div class="step-desc">Digitación, arpegios, escalas, tema. Todo igual que siempre.</div>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-icon">🎯</div>
+      <div class="rule-text">
+        <strong>La única regla</strong>
+        Cada vez que aparece ese grado — en cualquier ejercicio — lo nombrás en voz alta o mentalmente con claridad. Solo ese.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Rotación sugerida</div>
+        <div class="step-desc">Semana 1–2: el <strong>6</strong>. Semana 3–4: el <strong>2</strong>. Semana 5–6: la <strong>b7</strong>. Después combinás.</div>
+      </div>
+    </div>
+
+    <button class="done-btn" id="btn-2" onclick="toggleDone(2)">Marcar como hecho</button>
+  </div>
+
+  <!-- JUEVES -->
+  <div class="day-panel" id="day-3">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Día 4 · Jueves</div>
+        <div class="day-name">Drone con <em>restricción</em></div>
+      </div>
+      <div class="duration-badge"><span>15</span>min</div>
+    </div>
+
+    <div class="objective-block">
+      <div class="objective-label">Objetivo</div>
+      <div class="objective-text">Forzar al cerebro a buscar un grado específico dentro de una melodía libre. Une el trabajo auditivo con el de grados.</div>
+    </div>
+
+    <div class="steps-label">Cómo hacerlo</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Igual que el lunes</div>
+        <div class="step-desc">Drone de tónica, melodía lenta, regla oído → voz → mano.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Elegís un grado antes de empezar</div>
+        <div class="step-desc">Por ejemplo el <strong>6</strong>. Ese es el grado del día.</div>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-icon">📌</div>
+      <div class="rule-text">
+        <strong>La restricción</strong>
+        Cada frase tiene que pasar por ese grado en algún momento. No todas las notas, solo que cada idea musical lo incluya una vez.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">No tiene que sonar "bien"</div>
+        <div class="step-desc">El objetivo es que la mano empiece a <strong>buscar ese grado</strong> sola. La musicalidad viene después.</div>
+      </div>
+    </div>
+
+    <button class="done-btn" id="btn-3" onclick="toggleDone(3)">Marcar como hecho</button>
+  </div>
+
+  <!-- VIERNES -->
+  <div class="day-panel" id="day-4">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Día 5 · Viernes</div>
+        <div class="day-name">Transcripción <em>cantada</em></div>
+      </div>
+      <div class="duration-badge"><span>10</span>min</div>
+    </div>
+
+    <div class="objective-block">
+      <div class="objective-label">Objetivo</div>
+      <div class="objective-text">Usar la voz como puente entre el audio de la canción y el diapasón. Cerrar el gap entre oído y mano en contexto real.</div>
+    </div>
+
+    <div class="steps-label">Cómo hacerlo</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Aislá el bajo en Moises o Lalal.ai</div>
+        <div class="step-desc">Cualquier línea que estés trabajando. Con el bajo aislado es mucho más fácil escuchar cada nota.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Escuchás frase por frase</div>
+        <div class="step-desc">Ponés un fragmento corto. Cinco segundos. Lo repetís hasta que lo tengas claro en la cabeza.</div>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-icon">🎙️</div>
+      <div class="rule-text">
+        <strong>El puente</strong>
+        Antes de buscar la nota en el bajo, cantala en voz baja. Aunque desafines, aunque sea feo. La voz siempre antes que la mano.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Recién después buscás en el diapasón</div>
+        <div class="step-desc">No importa si tardás. El proceso lento ahora es lo que te da velocidad en tres meses.</div>
+      </div>
+    </div>
+
+    <button class="done-btn" id="btn-4" onclick="toggleDone(4)">Marcar como hecho</button>
+  </div>
+
+  <!-- SÁBADO -->
+  <div class="day-panel" id="day-5">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Día 6 · Sábado</div>
+        <div class="day-name">Replay <em>analítico</em></div>
+      </div>
+      <div class="duration-badge"><span>5</span>min</div>
+    </div>
+
+    <div class="objective-block">
+      <div class="objective-label">Objetivo</div>
+      <div class="objective-text">Convertir lo que hiciste bien en conocimiento consciente. Ver el replay en cámara lenta.</div>
+    </div>
+
+    <div class="steps-label">Cómo hacerlo</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Terminás tu rutina normal</div>
+        <div class="step-desc">Este ejercicio va al final, no al principio.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Elegís una frase que te haya salido bien</div>
+        <div class="step-desc">Una sola. Algo que te haya gustado o sorprendido durante la práctica.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">La analizás despacio</div>
+        <div class="step-desc">¿Qué grados usaste? ¿Sobre qué acorde estaba? ¿Por qué sonó como sonó? Sin apuro, sin presión.</div>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-icon">💡</div>
+      <div class="rule-text">
+        <strong>Solo una frase</strong>
+        No más. Una frase bien entendida vale más que diez analizadas a medias.
+      </div>
+    </div>
+
+    <button class="done-btn" id="btn-5" onclick="toggleDone(5)">Marcar como hecho</button>
+  </div>
+
+  <!-- DOMINGO -->
+  <div class="day-panel" id="day-6">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Día 7 · Domingo</div>
+        <div class="day-name">Libre o <em>descanso</em></div>
+      </div>
+      <div class="duration-badge"><span>—</span></div>
+    </div>
+
+    <div class="objective-block">
+      <div class="objective-label">Objetivo</div>
+      <div class="objective-text">El descanso también consolida. El cerebro procesa y fija lo aprendido durante el reposo.</div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-icon">🌿</div>
+      <div class="rule-text">
+        <strong>Opción</strong>
+        Si tenés ganas, repetís el drone melódico del lunes. Si no, descansás sin culpa. Ambas son la decisión correcta.
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-label">Para recordar</div>
+      <div class="principle-text">"La consistencia en 6 días vale más que la intensidad en 7."</div>
+    </div>
+
+    <button class="done-btn" id="btn-6" onclick="toggleDone(6)">Marcar como hecho</button>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="day-panel" id="day-7">
+    <div class="day-header">
+      <div>
+        <div class="day-number">Vista general</div>
+        <div class="day-name">Resumen <em>semanal</em></div>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card" id="sc-0" onclick="showDay(0)">
+        <div class="sc-day">Lunes</div>
+        <div class="sc-name">Drone melódico <span class="sc-check" id="sch-0"></span></div>
+        <div class="sc-focus">Oído → voz → mano</div>
+        <div class="sc-time">15 min</div>
+      </div>
+      <div class="summary-card" id="sc-1" onclick="showDay(1)">
+        <div class="sc-day">Martes</div>
+        <div class="sc-name">Análisis de línea <span class="sc-check" id="sch-1"></span></div>
+        <div class="sc-focus">Grados en papel</div>
+        <div class="sc-time">10 min</div>
+      </div>
+      <div class="summary-card" id="sc-2" onclick="showDay(2)">
+        <div class="sc-day">Miércoles</div>
+        <div class="sc-name">Grado del día <span class="sc-check" id="sch-2"></span></div>
+        <div class="sc-focus">Sin tiempo extra</div>
+        <div class="sc-time">0 min extra</div>
+      </div>
+      <div class="summary-card" id="sc-3" onclick="showDay(3)">
+        <div class="sc-day">Jueves</div>
+        <div class="sc-name">Drone + restricción <span class="sc-check" id="sch-3"></span></div>
+        <div class="sc-focus">Grado forzado</div>
+        <div class="sc-time">15 min</div>
+      </div>
+      <div class="summary-card" id="sc-4" onclick="showDay(4)">
+        <div class="sc-day">Viernes</div>
+        <div class="sc-name">Transcripción cantada <span class="sc-check" id="sch-4"></span></div>
+        <div class="sc-focus">Voz como puente</div>
+        <div class="sc-time">10 min</div>
+      </div>
+      <div class="summary-card" id="sc-5" onclick="showDay(5)">
+        <div class="sc-day">Sábado</div>
+        <div class="sc-name">Replay analítico <span class="sc-check" id="sch-5"></span></div>
+        <div class="sc-focus">Una frase, en profundidad</div>
+        <div class="sc-time">5 min</div>
+      </div>
+      <div class="summary-card" id="sc-6" onclick="showDay(6)" style="grid-column: 1 / -1">
+        <div class="sc-day">Domingo</div>
+        <div class="sc-name">Libre / Descanso <span class="sc-check" id="sch-6"></span></div>
+        <div class="sc-focus">El descanso consolida</div>
+        <div class="sc-time">—</div>
+      </div>
+    </div>
+
+    <div class="target-block">
+      <div class="target-label">Lo que ataca este plan</div>
+      <div class="target-row">
+        <span class="target-row-label">Oído y mano desconectados</span>
+        <span class="target-row-value">Lun · Jue</span>
+      </div>
+      <div class="target-row">
+        <span class="target-row-label">Grados sabidos, no automatizados</span>
+        <span class="target-row-value">Mié</span>
+      </div>
+      <div class="target-row">
+        <span class="target-row-label">Copiar sin analizar</span>
+        <span class="target-row-value">Mar · Sáb</span>
+      </div>
+      <div class="target-row">
+        <span class="target-row-label">Voz ausente como puente</span>
+        <span class="target-row-value">Vie</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'bajo-plan-v1';
+
+  function loadState() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch { return {}; }
+  }
+
+  function saveState(state) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+  }
+
+  let state = loadState();
+  let currentDay = 0;
+
+  function showDay(idx) {
+    document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('day-' + idx).classList.add('active');
+    document.getElementById('nav-' + idx).classList.add('active');
+    currentDay = idx;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleDone(idx) {
+    state[idx] = !state[idx];
+    saveState(state);
+    updateUI();
+  }
+
+  function updateUI() {
+    let count = 0;
+    for (let i = 0; i < 7; i++) {
+      const done = !!state[i];
+      if (done) count++;
+
+      // nav button
+      const nav = document.getElementById('nav-' + i);
+      if (nav) nav.classList.toggle('completed', done);
+
+      // dot
+      const dot = document.getElementById('dot-' + i);
+      if (dot) dot.classList.toggle('done', done);
+
+      // done button
+      const btn = document.getElementById('btn-' + i);
+      if (btn) {
+        btn.classList.toggle('completed', done);
+        btn.textContent = done ? '✓ Hecho' : 'Marcar como hecho';
+      }
+
+      // summary card
+      const sc = document.getElementById('sc-' + i);
+      if (sc) sc.classList.toggle('completed', done);
+
+      // summary check
+      const sch = document.getElementById('sch-' + i);
+      if (sch) sch.textContent = done ? '✓' : '';
+    }
+
+    document.getElementById('week-label').textContent = count + ' / 7 días';
+  }
+
+  updateUI();
+</script>
+</body>
+</html>
