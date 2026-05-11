@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Bajo — Lectura de Notas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1ea;
+  --paper:#faf7f0;
+  --ink:#1a2233;
+  --ink-soft:#2c3650;
+  --muted:#6b7388;
+  --accent:#1e4d8b;
+  --rule:#d9d3c5;
+  --rule-soft:#e8e2d3;
+  --correct:#2d6a3e;
+  --wrong:#a93a3a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--ink);font-family:'Inter Tight',sans-serif;-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.5}
+body{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(30,77,139,.04), transparent 40%),
+    radial-gradient(circle at 88% 92%, rgba(201,138,58,.05), transparent 45%),
+    var(--bg);
+  min-height:100vh;
+  padding-bottom:40px;
+}
+.container{max-width:560px;margin:0 auto;padding:24px}
+
+header{padding:24px 0 20px;border-bottom:1px solid var(--rule);text-align:center}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(28px,5vw,40px);line-height:1;letter-spacing:-.02em}
+h1 em{font-style:italic;font-weight:300;color:var(--accent)}
+
+.level-bar{display:flex;gap:6px;margin:20px 0 0;justify-content:center}
+.level-btn{padding:8px 14px;background:none;border:1px solid var(--rule);font-family:'Inter Tight',sans-serif;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-radius:2px;transition:all .15s ease}
+.level-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.level-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin:24px 0}
+.stat{background:var(--paper);padding:14px 8px;text-align:center}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.stat-value{font-family:'Fraunces',serif;font-size:22px;font-weight:500;color:var(--ink)}
+.stat-value.accent{color:var(--accent)}
+
+.staff-container{background:var(--paper);border:1px solid var(--rule);padding:32px 16px;margin:8px 0 24px;display:flex;justify-content:center;align-items:center;min-height:220px;position:relative}
+.staff-container.correct{background:rgba(45,106,62,.08);border-color:var(--correct)}
+.staff-container.wrong{background:rgba(169,58,58,.08);border-color:var(--wrong)}
+.feedback{position:absolute;top:12px;right:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;opacity:0;transition:opacity .2s ease}
+.feedback.show{opacity:1}
+.feedback.correct{color:var(--correct)}
+.feedback.wrong{color:var(--wrong)}
+
+svg.staff{display:block;max-width:100%;height:auto}
+
+.answers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.answer-btn{padding:18px 8px;background:var(--paper);border:1px solid var(--rule);font-family:'Fraunces',serif;font-size:22px;font-weight:500;color:var(--ink);cursor:pointer;border-radius:2px;transition:all .12s ease;letter-spacing:.02em}
+.answer-btn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.answer-btn:active{transform:scale(.96)}
+.answer-btn.correct-flash{background:var(--correct);color:#fff;border-color:var(--correct)}
+.answer-btn.wrong-flash{background:var(--wrong);color:#fff;border-color:var(--wrong)}
+.answer-btn:disabled{cursor:not-allowed}
+
+.controls{display:flex;gap:8px;margin-top:20px}
+.ctrl-btn{flex:1;padding:14px;background:none;border:1px solid var(--rule);font-family:'Inter Tight',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--ink-soft);cursor:pointer;text-transform:uppercase;border-radius:2px;transition:all .15s ease}
+.ctrl-btn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.notes-reference{margin-top:32px;padding-top:24px;border-top:1px solid var(--rule)}
+.notes-reference h3{font-family:'Fraunces',serif;font-weight:400;font-size:18px;margin-bottom:14px;letter-spacing:-.01em}
+.notes-reference p{font-size:13.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:10px}
+.notes-reference code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:rgba(30,77,139,.07);padding:1px 5px;border-radius:2px;color:var(--accent)}
+
+.tips{margin-top:24px;background:var(--paper);border-left:2px solid var(--accent);padding:14px 18px;font-size:13.5px;color:var(--ink-soft);line-height:1.55}
+.tips strong{color:var(--ink)}
+
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule);text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em}
+footer a{color:var(--accent);text-decoration:none;margin:0 6px}
+
+@media (max-width:420px){
+  .container{padding:16px}
+  .answers{grid-template-columns:repeat(4,1fr)}
+  .answer-btn{padding:14px 4px;font-size:18px}
+  .stat-value{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="eyebrow">MacroConsulting · Práctica personal</div>
+    <h1>Lectura de <em>notas</em><br>en clave de Fa</h1>
+  </header>
+
+  <div class="level-bar">
+    <button class="level-btn active" data-level="1">Nivel 1</button>
+    <button class="level-btn" data-level="2">Nivel 2</button>
+    <button class="level-btn" data-level="3">Nivel 3</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Aciertos</div>
+      <div class="stat-value accent" id="correctCount">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Errores</div>
+      <div class="stat-value" id="wrongCount">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Tiempo prom.</div>
+      <div class="stat-value" id="avgTime">—</div>
+    </div>
+  </div>
+
+  <div class="staff-container" id="staffContainer">
+    <span class="feedback" id="feedback"></span>
+    <svg class="staff" id="staff" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <div class="answers" id="answers"></div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="resetBtn">Reiniciar sesión</button>
+    <button class="ctrl-btn" id="toggleNamesBtn">Mostrar referencia</button>
+  </div>
+
+  <div class="notes-reference" id="reference" style="display:none">
+    <h3>Notas en clave de Fa</h3>
+    <p><strong>Las 5 líneas (de abajo hacia arriba)</strong>: <code>Sol – Si – Re – Fa – La</code></p>
+    <p><strong>Los 4 espacios (de abajo hacia arriba)</strong>: <code>La – Do – Mi – Sol</code></p>
+    <p><strong>Truco mnemotécnico</strong>: las líneas → "Sol Si Re Fa La" (suena como "sol-si-re-fa-la"). Los espacios → "La Do Mi Sol".</p>
+    <p><strong>Líneas adicionales (Nivel 3)</strong>: arriba del pentagrama → <code>Do – Mi</code>. Abajo → <code>Mi – Do</code>. Estas son las que más cuestan al principio — es normal.</p>
+  </div>
+
+  <div class="tips">
+    <strong>Cómo usar esto:</strong> 5 minutos por día, todos los días. No corrás — leé la nota, decila mentalmente, después tocás el botón. La velocidad llega sola con repetición. Cuando tu tiempo promedio baje de 2 segundos en el Nivel 1, pasás al 2. Cuando baje de 3 segundos en el Nivel 2, pasás al 3.
+  </div>
+
+  <footer>
+    <a href="bajo-training.html">Plan auditivo</a> · <a href="lectura-training.html">Plan de lectura</a>
+  </footer>
+</div>
+
+<script>
+// === DATOS DE NOTAS EN CLAVE DE FA ===
+// y = posición vertical en la pauta (en unidades SVG)
+// El pentagrama va de y=40 (línea superior, La) a y=80 (línea inferior, Sol)
+// Cada paso de nota = 5 unidades
+
+const ALL_NOTES = [
+  // Líneas adicionales abajo (Nivel 3)
+  { name:'Do', y:100, ledger:'below', octave:2 },
+  { name:'Re', y:95,  ledger:'below', octave:2 },
+  { name:'Mi', y:90,  ledger:'below', octave:2 },  // primera línea adicional abajo
+  { name:'Fa', y:85,  ledger:null,    octave:2 },
+  // Pentagrama (Nivel 1 y 2)
+  { name:'Sol',y:80,  ledger:null,    octave:2 },  // línea 1 (la más baja)
+  { name:'La', y:75,  ledger:null,    octave:2 },  // espacio 1
+  { name:'Si', y:70,  ledger:null,    octave:2 },  // línea 2
+  { name:'Do', y:65,  ledger:null,    octave:3 },  // espacio 2
+  { name:'Re', y:60,  ledger:null,    octave:3 },  // línea 3 (central)
+  { name:'Mi', y:55,  ledger:null,    octave:3 },  // espacio 3
+  { name:'Fa', y:50,  ledger:null,    octave:3 },  // línea 4
+  { name:'Sol',y:45,  ledger:null,    octave:3 },  // espacio 4
+  { name:'La', y:40,  ledger:null,    octave:3 },  // línea 5 (la más alta)
+  // Líneas adicionales arriba (Nivel 3)
+  { name:'Si', y:35,  ledger:null,    octave:3 },
+  { name:'Do', y:30,  ledger:'above', octave:4 },  // primera línea adicional arriba
+  { name:'Re', y:25,  ledger:'above', octave:4 },
+  { name:'Mi', y:20,  ledger:'above', octave:4 },
+];
+
+// Nivel 1: solo líneas del pentagrama
+const LEVEL_1 = ALL_NOTES.filter(n => n.y >= 40 && n.y <= 80 && [40,50,60,70,80].includes(n.y));
+// Nivel 2: todo el pentagrama (líneas + espacios)
+const LEVEL_2 = ALL_NOTES.filter(n => n.y >= 40 && n.y <= 80);
+// Nivel 3: todo, incluidas líneas adicionales
+const LEVEL_3 = ALL_NOTES;
+
+const LEVELS = { 1: LEVEL_1, 2: LEVEL_2, 3: LEVEL_3 };
+
+// === ESTADO ===
+const STORAGE_KEY = 'lectura-notas-state';
+
+function loadState(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState(); }
+  catch(e){ return defaultState(); }
+}
+function defaultState(){
+  return { level:1, correct:0, wrong:0, times:[], lastNote:null };
+}
+function saveState(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+let state = loadState();
+let currentNote = null;
+let questionStartTime = null;
+let acceptingAnswers = false;
+
+const NOTE_OPTIONS = ['Do','Re','Mi','Fa','Sol','La','Si'];
+
+// === DIBUJO DEL PENTAGRAMA ===
+
+function drawStaff(note){
+  const svg = document.getElementById('staff');
+  // viewBox: 0 0 320 160
+  // Pentagrama centrado verticalmente
+  const lines = [40, 50, 60, 70, 80];
+  const noteX = 200;
+
+  let html = '';
+
+  // Líneas del pentagrama
+  lines.forEach(y => {
+    html += `<line x1="20" y1="${y}" x2="300" y2="${y}" stroke="#1a2233" stroke-width="1"/>`;
+  });
+
+  // Clave de Fa (símbolo simplificado pero reconocible)
+  html += drawBassClef(30, 60);
+
+  // Líneas adicionales para la nota
+  if (note.ledger === 'above') {
+    // Líneas adicionales arriba (sobre la 5ª línea, y<40)
+    for (let y = 30; y >= note.y; y -= 10) {
+      if (y < 40) html += `<line x1="${noteX-12}" y1="${y}" x2="${noteX+12}" y2="${y}" stroke="#1a2233" stroke-width="1"/>`;
+    }
+  } else if (note.ledger === 'below') {
+    // Líneas adicionales abajo (debajo de la 1ª línea, y>80)
+    for (let y = 90; y <= note.y; y += 10) {
+      if (y > 80) html += `<line x1="${noteX-12}" y1="${y}" x2="${noteX+12}" y2="${y}" stroke="#1a2233" stroke-width="1"/>`;
+    }
+  }
+
+  // Nota (cabeza de nota negra, ovalada e inclinada)
+  html += `<ellipse cx="${noteX}" cy="${note.y}" rx="7" ry="5" fill="#1a2233" transform="rotate(-20 ${noteX} ${note.y})"/>`;
+
+  // Plica (stem)
+  if (note.y >= 60) {
+    // Plica hacia arriba (notas bajas)
+    html += `<line x1="${noteX+6}" y1="${note.y-1}" x2="${noteX+6}" y2="${note.y-35}" stroke="#1a2233" stroke-width="1.5"/>`;
+  } else {
+    // Plica hacia abajo (notas altas)
+    html += `<line x1="${noteX-6}" y1="${note.y+1}" x2="${noteX-6}" y2="${note.y+35}" stroke="#1a2233" stroke-width="1.5"/>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+function drawBassClef(cx, cy){
+  // Clave de Fa estilizada — espiral con dos puntos a la derecha
+  // El "ojo" de la clave se posa en la línea de Fa (y=50)
+  const yFa = 50;
+  return `
+    <g transform="translate(${cx}, ${yFa})">
+      <path d="M 0,-12
+               C 8,-12 14,-6 14,2
+               C 14,12 6,18 -4,18
+               C -10,18 -14,14 -14,8
+               L -10,8
+               C -10,12 -8,14 -4,14
+               C 2,14 8,10 8,2
+               C 8,-4 4,-8 -2,-8
+               C -6,-8 -8,-6 -8,-2
+               L -12,-2
+               C -12,-8 -6,-12 0,-12 Z"
+            fill="#1a2233"/>
+      <circle cx="20" cy="-5" r="2" fill="#1a2233"/>
+      <circle cx="20" cy="5" r="2" fill="#1a2233"/>
+    </g>
+  `;
+}
+
+// === LÓGICA DE PREGUNTAS ===
+
+function pickNote(){
+  const pool = LEVELS[state.level];
+  let pick;
+  // Evitar repetir la misma nota dos veces seguidas
+  let attempts = 0;
+  do {
+    pick = pool[Math.floor(Math.random() * pool.length)];
+    attempts++;
+  } while (state.lastNote && pick.name === state.lastNote.name && pick.y === state.lastNote.y && attempts < 10);
+  return pick;
+}
+
+function newQuestion(){
+  currentNote = pickNote();
+  state.lastNote = currentNote;
+  drawStaff(currentNote);
+  questionStartTime = Date.now();
+  acceptingAnswers = true;
+  document.getElementById('staffContainer').classList.remove('correct','wrong');
+  document.getElementById('feedback').classList.remove('show');
+  document.querySelectorAll('.answer-btn').forEach(b=>{
+    b.classList.remove('correct-flash','wrong-flash');
+    b.disabled = false;
+  });
+}
+
+function handleAnswer(noteName, btn){
+  if (!acceptingAnswers) return;
+  acceptingAnswers = false;
+  const elapsed = (Date.now() - questionStartTime) / 1000;
+
+  if (noteName === currentNote.name) {
+    state.correct++;
+    state.times.push(elapsed);
+    // mantener solo los últimos 20 tiempos
+    if (state.times.length > 20) state.times.shift();
+    btn.classList.add('correct-flash');
+    document.getElementById('staffContainer').classList.add('correct');
+    showFeedback('✓ Correcto', 'correct');
+    setTimeout(newQuestion, 700);
+  } else {
+    state.wrong++;
+    btn.classList.add('wrong-flash');
+    // marcar también la correcta
+    document.querySelectorAll('.answer-btn').forEach(b=>{
+      if (b.dataset.note === currentNote.name) b.classList.add('correct-flash');
+    });
+    document.getElementById('staffContainer').classList.add('wrong');
+    showFeedback('Era ' + currentNote.name, 'wrong');
+    setTimeout(newQuestion, 1500);
+  }
+  updateStats();
+  saveState();
+}
+
+function showFeedback(text, kind){
+  const fb = document.getElementById('feedback');
+  fb.textContent = text;
+  fb.className = 'feedback show ' + kind;
+}
+
+function updateStats(){
+  document.getElementById('correctCount').textContent = state.correct;
+  document.getElementById('wrongCount').textContent = state.wrong;
+  if (state.times.length > 0) {
+    const avg = state.times.reduce((a,b)=>a+b,0) / state.times.length;
+    document.getElementById('avgTime').textContent = avg.toFixed(1) + 's';
+  } else {
+    document.getElementById('avgTime').textContent = '—';
+  }
+}
+
+// === UI ===
+
+function buildAnswers(){
+  const container = document.getElementById('answers');
+  container.innerHTML = '';
+  // Mostramos solo 7 nombres, pero el último (Si) lo ponemos en una fila de 4+3
+  // Para mantener grid de 4 columnas, ponemos 4 arriba y 3 abajo
+  NOTE_OPTIONS.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.textContent = name;
+    btn.dataset.note = name;
+    btn.addEventListener('click', ()=>handleAnswer(name, btn));
+    container.appendChild(btn);
+  });
+}
+
+document.querySelectorAll('.level-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.level = parseInt(btn.dataset.level);
+    saveState();
+    newQuestion();
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if (confirm('¿Reiniciar contadores y tiempos? (No afecta el nivel seleccionado.)')) {
+    state.correct = 0;
+    state.wrong = 0;
+    state.times = [];
+    saveState();
+    updateStats();
+  }
+});
+
+document.getElementById('toggleNamesBtn').addEventListener('click', (e)=>{
+  const ref = document.getElementById('reference');
+  if (ref.style.display === 'none') {
+    ref.style.display = 'block';
+    e.target.textContent = 'Ocultar referencia';
+  } else {
+    ref.style.display = 'none';
+    e.target.textContent = 'Mostrar referencia';
+  }
+});
+
+// === INIT ===
+// activar el nivel guardado
+document.querySelectorAll('.level-btn').forEach(b=>{
+  b.classList.toggle('active', parseInt(b.dataset.level) === state.level);
+});
+buildAnswers();
+updateStats();
+newQuestion();
+</script>
+</body>
+</html>
