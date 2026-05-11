@@ -32,6 +32,35 @@
     padding-bottom: 40px;
   }
 
+  /* BACK LINK */
+  .back-link {
+    display: inline-block;
+    padding: 16px 32px 0;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  /* FOOTER */
+  .site-footer {
+    margin-top: 56px;
+    padding: 24px 32px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+  }
+  .site-footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .site-footer a:hover { color: var(--text); }
+
   /* HEADER */
   .header {
     padding: 48px 32px 32px;
@@ -457,6 +486,8 @@
 </style>
 </head>
 <body>
+
+<a class="back-link" href="index.html">← Volver al inicio</a>
 
 <div class="header">
   <div class="header-label">MacroConsulting · Práctica personal</div>
@@ -994,5 +1025,10 @@
 
   updateUI();
 </script>
+
+<div class="site-footer">
+  <a href="index.html">← Inicio</a>
+</div>
+
 </body>
 </html>

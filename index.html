@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Bajo — Entrenamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1ea;
+  --paper:#faf7f0;
+  --ink:#1a2233;
+  --ink-soft:#2c3650;
+  --muted:#6b7388;
+  --accent:#1e4d8b;
+  --accent-2:#c98a3a;
+  --rule:#d9d3c5;
+  --rule-soft:#e8e2d3;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--ink);font-family:'Inter Tight',sans-serif;-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.5}
+body{
+  background:
+    radial-gradient(circle at 10% 5%, rgba(30,77,139,.06), transparent 45%),
+    radial-gradient(circle at 90% 95%, rgba(201,138,58,.07), transparent 50%),
+    var(--bg);
+  min-height:100vh;
+  padding-bottom:60px;
+}
+.container{max-width:640px;margin:0 auto;padding:24px}
+
+header{padding:48px 0 36px;border-bottom:1px solid var(--rule);text-align:center}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+h1{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(38px,7vw,60px);line-height:.98;letter-spacing:-.025em;color:var(--ink)}
+h1 em{font-style:italic;font-weight:300;color:var(--accent)}
+.subtitle{margin-top:18px;font-size:15px;color:var(--ink-soft);max-width:480px;margin-left:auto;margin-right:auto;line-height:1.55}
+.subtitle em{font-style:italic;color:var(--accent)}
+
+.section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:36px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--rule-soft)}
+
+.cards{display:flex;flex-direction:column;gap:14px}
+.card{display:block;background:var(--paper);border:1px solid var(--rule);padding:22px 24px;text-decoration:none;color:inherit;border-radius:2px;transition:all .18s ease;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform .25s ease}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,34,51,.06)}
+.card:hover::before{transform:scaleY(1)}
+.card-header{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+.card-title{font-family:'Fraunces',serif;font-weight:400;font-size:24px;letter-spacing:-.015em;line-height:1.15;color:var(--ink)}
+.card-title em{font-style:italic;color:var(--accent)}
+.card-meta{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
+.card-desc{font-size:14px;color:var(--ink-soft);line-height:1.55;margin-top:4px}
+.card-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);background:rgba(30,77,139,.08);padding:3px 8px;border-radius:2px;margin-top:12px;margin-right:6px}
+.card-tag.warm{color:var(--accent-2);background:rgba(201,138,58,.1)}
+.card-arrow{position:absolute;bottom:18px;right:22px;font-family:'Fraunces',serif;font-style:italic;font-size:20px;color:var(--accent);opacity:0;transition:opacity .2s ease,transform .2s ease}
+.card:hover .card-arrow{opacity:1;transform:translateX(3px)}
+
+.intro-block{background:var(--paper);border-left:2px solid var(--accent);padding:16px 20px;margin-bottom:28px;font-size:14px;color:var(--ink-soft);line-height:1.55}
+.intro-block strong{color:var(--ink)}
+
+footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em}
+
+@media (max-width:520px){
+  .container{padding:20px}
+  header{padding:32px 0 28px}
+  .card{padding:18px 20px}
+  .card-title{font-size:21px}
+  .card-arrow{display:none}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="eyebrow">MacroConsulting · Práctica personal</div>
+    <h1>Bajo <em>entrenamiento</em></h1>
+    <p class="subtitle">Una pequeña biblioteca de <em>herramientas y planes</em> para estudiar bajo de forma sistemática. Música, lectura, oído.</p>
+  </header>
+
+  <div class="section-label">Herramientas interactivas</div>
+
+  <div class="cards">
+
+    <a class="card" href="lectnew.html">
+      <div class="card-header">
+        <div class="card-title">Lectura de <em>notas</em> en clave de Fa</div>
+        <div class="card-meta">5 min/día</div>
+      </div>
+      <div class="card-desc">Reconocimiento de notas en pentagrama, tres niveles de dificultad, con sonido y registro de sesiones. Mide tu tiempo de reconocimiento y guarda historial con gráfico de evolución.</div>
+      <span class="card-tag">Interactivo</span>
+      <span class="card-tag warm">Con sonido</span>
+      <span class="card-arrow">→</span>
+    </a>
+
+  </div>
+
+  <div class="section-label">Planes de estudio</div>
+
+  <div class="cards">
+
+    <a class="card" href="bajo-training.html">
+      <div class="card-header">
+        <div class="card-title">Plan <em>auditivo</em> semanal</div>
+        <div class="card-meta">15–20 min/día</div>
+      </div>
+      <div class="card-desc">Siete días de ejercicios para entrenar el oído desde el sonido hacia el instrumento. Reconocimiento de intervalos, transcripción de oído, conexión entre lo que se escucha y lo que se toca.</div>
+      <span class="card-tag">Plan 7 días</span>
+      <span class="card-arrow">→</span>
+    </a>
+
+    <a class="card" href="lectura-training.html">
+      <div class="card-header">
+        <div class="card-title">Plan de <em>lectura</em> con audiación</div>
+        <div class="card-meta">10–15 min/día</div>
+      </div>
+      <div class="card-desc">Siete días de ejercicios para conectar el símbolo escrito con el oído interno. Solfeo sin instrumento, intervalos de referencia, pre-escucha, dictado al revés y lectura a primera vista.</div>
+      <span class="card-tag">Plan 7 días</span>
+      <span class="card-arrow">→</span>
+    </a>
+
+  </div>
+
+  <div class="section-label">Cómo combinar estas herramientas</div>
+
+  <div class="intro-block">
+    <strong>Una secuencia razonable:</strong> primero <em>Lectura de notas</em> hasta que el reconocimiento sea automático (tiempos &lt;2.5s en Nivel 3). Después <em>Plan de lectura con audiación</em> para conectar el símbolo con el oído interno. El <em>Plan auditivo</em> es paralelo y se puede hacer en cualquier momento — entrena una dimensión distinta. Cinco minutos por día sostenidos valen más que una hora una vez por semana.
+  </div>
+
+  <footer>gsember/bajo-training · GitHub Pages</footer>
+</div>
+</body>
+</html>
