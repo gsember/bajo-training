@@ -50,6 +50,8 @@ h1 em{font-style:italic;font-weight:300;color:var(--accent)}
 
 .video-wrapper{position:relative;padding-top:56.25%;background:#0d1117}
 .video-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-wrapper.vertical{max-width:430px;margin:0 auto;padding-top:0;aspect-ratio:9/16}
+.video-wrapper.vertical iframe{position:static;height:100%}
 
 .video-info{padding:18px 22px 20px}
 .video-number{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
@@ -80,7 +82,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);text-al
     <p class="subtitle">Ejercicios enviados por el profesor. Mirá, repetí y practicá cada uno a tu propio ritmo.</p>
   </header>
 
-  <div class="section-label">Ejercicios — 2 videos</div>
+  <div class="section-label">Ejercicios — 3 videos</div>
 
   <div class="video-list">
 
@@ -115,6 +117,25 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);text-al
       <div class="video-info">
         <div class="video-number">Ejercicio 02</div>
         <div class="video-title"><em>Ejercicio</em> 2</div>
+        <div class="video-desc">Ejercicio enviado por el profesor.</div>
+        <div class="video-tags">
+          <span class="tag">Profesor</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-wrapper vertical">
+        <iframe
+          src="https://www.youtube.com/embed/kBj6bgVI164"
+          title="Ejercicio 3"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-info">
+        <div class="video-number">Ejercicio 03</div>
+        <div class="video-title"><em>Ejercicio</em> 3</div>
         <div class="video-desc">Ejercicio enviado por el profesor.</div>
         <div class="video-tags">
           <span class="tag">Profesor</span>
