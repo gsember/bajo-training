@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afinación de batería · 12 / 16 / 22</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f1ea; --paper:#faf7f0; --ink:#1a2233; --dim:#6a7080;
+    --blue:#1e4d8b; --gold:#c98a3a; --border:#d9d3c5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    line-height:1.55; padding:40px 20px 64px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px; margin:0 auto}
+
+  .back{
+    display:inline-block; text-decoration:none; color:var(--dim);
+    font-size:.82rem; font-weight:500; margin-bottom:26px;
+    transition:color .15s ease;
+  }
+  .back:hover{color:var(--blue)}
+
+  .kicker{
+    font-size:.72rem; text-transform:uppercase; letter-spacing:.14em;
+    color:var(--gold); font-weight:600; margin-bottom:12px;
+  }
+  h1{
+    font-family:'Fraunces',serif; font-weight:600; font-size:2.3rem;
+    line-height:1.08; letter-spacing:-.01em; margin-bottom:14px;
+  }
+  h1 em{font-style:italic; color:var(--blue)}
+  .lead{color:var(--dim); font-size:1.02rem; max-width:52ch; margin-bottom:38px}
+
+  h2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.25rem;
+    margin:0 0 16px; letter-spacing:-.01em;
+  }
+
+  .panel{
+    background:var(--paper); border:1px solid var(--border);
+    border-radius:14px; padding:6px 4px; margin-bottom:34px; overflow:hidden;
+  }
+  table{width:100%; border-collapse:collapse}
+  thead th{
+    text-align:left; font-size:.68rem; text-transform:uppercase;
+    letter-spacing:.09em; color:var(--dim); font-weight:600;
+    padding:15px 18px 11px; border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:17px 18px; border-bottom:1px solid var(--border); vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  .drum{font-weight:700; font-size:1.02rem}
+  .drum small{display:block; font-weight:400; color:var(--dim); font-size:.76rem; margin-top:1px}
+  .hz{font-family:'JetBrains Mono',monospace; font-size:1.12rem; font-weight:700}
+  .hz.b{color:var(--blue)}
+  .hz.r{color:var(--gold)}
+  .hz span{font-size:.66rem; font-weight:500; color:var(--dim)}
+  .base{font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--dim)}
+  .head-tag{
+    display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.05em;
+    text-transform:uppercase; padding:2px 7px; border-radius:5px;
+  }
+  .head-tag.b{background:rgba(30,77,139,.1); color:var(--blue)}
+  .head-tag.r{background:rgba(201,138,58,.14); color:var(--gold)}
+
+  .steps{counter-reset:s; list-style:none; margin:0 0 6px}
+  .steps li{
+    position:relative; padding:0 0 16px 40px; color:#39414f;
+  }
+  .steps li:last-child{padding-bottom:0}
+  .steps li::before{
+    counter-increment:s; content:counter(s);
+    position:absolute; left:0; top:-1px;
+    width:26px; height:26px; border-radius:50%;
+    background:var(--blue); color:#fff;
+    font-family:'JetBrains Mono',monospace; font-size:.8rem; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .steps b{color:var(--ink)}
+
+  .perdrum{
+    background:var(--paper); border:1px solid var(--border);
+    border-left:3px solid var(--gold); border-radius:10px;
+    padding:14px 16px; margin-bottom:12px; font-size:.92rem;
+  }
+  .perdrum:last-child{margin-bottom:0}
+  .perdrum strong{font-weight:700}
+  .perdrum .val{font-family:'JetBrains Mono',monospace; font-weight:700}
+  .perdrum .val.b{color:var(--blue)}
+  .perdrum .val.r{color:var(--gold)}
+
+  .tip{
+    font-size:.88rem; color:#39414f; background:rgba(30,77,139,.05);
+    border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-top:18px;
+  }
+  .tip b{color:var(--ink)}
+
+  footer{
+    margin-top:44px; padding-top:20px; border-top:1px solid var(--border);
+    color:var(--dim); font-size:.76rem; text-align:center;
+  }
+  footer .note{display:block; margin-bottom:6px; max-width:48ch; margin-inline:auto}
+
+  @media (max-width:520px){
+    h1{font-size:1.9rem}
+    thead th:nth-child(4), tbody td:nth-child(4){display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="./">← Bajo entrenamiento</a>
+
+  <div class="kicker">MacroConsulting · Práctica personal</div>
+  <h1>Afinación de <em>batería</em></h1>
+  <p class="lead">Mi kit de 12 / 16 / 22. Frecuencia de <strong>lug</strong> (el golpecito al lado de cada tornillo) para el parche de arriba y el de abajo, más cómo llegar a esos valores.</p>
+
+  <h2>La afinación</h2>
+  <div class="panel">
+    <table>
+      <thead>
+        <tr>
+          <th>Tambor</th>
+          <th><span class="head-tag b">Arriba · batter</span></th>
+          <th><span class="head-tag r">Abajo · reso</span></th>
+          <th>Nota base</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="drum">Tom 12"<small>colgante</small></td>
+          <td class="hz b">186 <span>Hz</span></td>
+          <td class="hz r">229 <span>Hz</span></td>
+          <td class="base">Si2 · 124 Hz</td>
+        </tr>
+        <tr>
+          <td class="drum">Tom de piso 16"<small>floor tom</small></td>
+          <td class="hz b">110 <span>Hz</span></td>
+          <td class="hz r">136 <span>Hz</span></td>
+          <td class="base">Re2 · 73 Hz</td>
+        </tr>
+        <tr>
+          <td class="drum">Bombo 22"<small>bass drum</small></td>
+          <td class="hz b">58 <span>Hz</span></td>
+          <td class="hz r">87 <span>Hz</span></td>
+          <td class="base">Re#1 · 58 Hz</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Cómo llegar a esos valores</h2>
+  <ol class="steps">
+    <li>Parche asentado y <b>sin amortiguación</b> (nada de almohaditas ni aros mientras afinás).</li>
+    <li>Arrancá con el parche <b>flojo</b>, apenas sin arrugas. Apretá cada tornillo <b>en cruz</b> (estrella), con la mano hasta que "muerda", y de ahí ½ vuelta pareja a cada uno.</li>
+    <li>Con el afinador, golpeá a <b>2–3 cm de cada tornillo</b> (no al centro) y subí cada bulón hasta el número objetivo. <b>Todos los tornillos del parche al mismo Hz.</b></li>
+    <li>Mejor <b>llegar desde abajo</b>: si un lug quedó pasado, aflojalo un poco y volvé a subir de a ⅛ de vuelta. Asienta más parejo.</li>
+    <li>Dá la <b>vuelta completa 2 veces</b>: al mover uno se corren los vecinos. Cuando todos coinciden, el parche quedó limpio.</li>
+    <li>Afiná primero el <b>batter</b> (arriba) y después el <b>reso</b> (abajo), que va más apretado.</li>
+  </ol>
+
+  <div style="margin-top:22px">
+    <div class="perdrum">
+      <strong>Tom 12"</strong> — arriba todos los lugs a <span class="val b">186 Hz</span>, abajo a <span class="val r">229 Hz</span>. El reso queda notablemente más tenso que el batter → tom abierto y cantado.
+    </div>
+    <div class="perdrum">
+      <strong>Tom de piso 16"</strong> — arriba <span class="val b">110 Hz</span>, abajo <span class="val r">136 Hz</span>. Mantené el mismo carácter que el 12: reso una quinta más agudo (×1,5).
+    </div>
+    <div class="perdrum">
+      <strong>Bombo 22"</strong> — arriba (batter, donde pega el pedal) bien flojo a <span class="val b">58 Hz</span>, adelante (reso) a <span class="val r">87 Hz</span>. Si querés más pegada y menos sustain, sumá una almohadita apoyando apenas el batter.
+    </div>
+  </div>
+
+  <div class="tip">
+    <b>La nota base</b> es el tono del tambor entero (golpe al centro) — sirve solo para confirmar al final, no es lo que igualás lug por lug. Y estos valores son para <b>parches de una capa</b> (tipo Ambassador); con dos capas afiná un poco más abajo manteniendo la proporción arriba/abajo.
+  </div>
+
+  <footer>
+    <span class="note">Referencia: guía de afinación Tune-Bot · afinación abierta con el reso una quinta sobre el batter.</span>
+    gsember/bajo-training · GitHub Pages
+  </footer>
+</div>
+</body>
+</html>
