@@ -1,6 +1,6 @@
 Entender qué pasa cuando afinás una batería, en vez de seguir una tabla a ciegas: qué es una nota, cómo conversan el parche de arriba y el de abajo, y por qué los toms se afinan por intervalos.
 
-## 01 · Qué es un *"G2"*
+## 01 · Nota y frecuencia — qué es un *"G2"*
 
 El sonido es una vibración, y la velocidad de esa vibración se mide en **hertz (Hz)**, que son ciclos por segundo. Cuanto más rápido vibra algo, más **agudo** suena; cuanto más lento, más **grave**. Un parche que vibra a 100 Hz suena grave; uno a 400 Hz, mucho más agudo.
 
@@ -22,7 +22,7 @@ En tu kit quedaron: tom 12" en `Si2 (124 Hz)`, tom 16" en `Re2 (73 Hz)` y el bom
 
 > **Ojo:** distintos sistemas numeran las octavas un poco distinto, así que no te asustes si una app muestra la misma nota con otro número. Lo que no cambia nunca es la frecuencia en Hz. Y en el bombo la nota es medio difusa, porque suena muy amortiguado: tomala como aproximada.
 
-## 02 · La relación *arriba y abajo*
+## 02 · Los dos parches — la relación *arriba y abajo*
 
 Un tom tiene dos parches y **están acoplados por el aire de adentro del casco**: cuando golpeás el de arriba, el aire empuja al de abajo y los dos vibran como un sistema. Por eso el parche de abajo, aunque no lo toques, cambia por completo el sonido.
 
@@ -42,7 +42,7 @@ Al revés: el tono **cae después del golpe**, ese "duuum" hacia abajo. Más gor
 
 Una forma práctica de pensarlo: el **batter (arriba) manda en el tono principal y en cómo se siente al tocar**, y el **reso (abajo) manda en el sustain y hacia dónde "se dobla" la nota** después del golpe. Ninguno es más importante: es la conversación entre los dos lo que da el sonido.
 
-## 03 · La relación *entre los toms*
+## 03 · Entre tambores — la relación *entre los toms*
 
 Acá entra el **diámetro**. El tamaño define el *rango natural* de cada tambor: uno grande suena grave y uno chico agudo, y no los forzás demasiado fuera de su zona sin que suenen mal (un 16" nunca canta tan agudo como un 12" sin sonar tenso). Primera regla: **afiná cada tom en el punto cómodo de su propio rango**, ni tan flojo que aletee ni tan apretado que se ahogue.
 
