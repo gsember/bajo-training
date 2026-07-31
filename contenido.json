@@ -15,14 +15,42 @@
       "total": 24,
       "items": []
     },
-    "clases": [],
+    "clases": [
+      {
+        "archivo": "bajo/clases/ejercicio-01.md",
+        "titulo": "Ejercicio 1",
+        "descripcion": "Ejercicio enviado por el profesor."
+      },
+      {
+        "archivo": "bajo/clases/ejercicio-02.md",
+        "titulo": "Ejercicio 2",
+        "descripcion": "Ejercicio enviado por el profesor."
+      },
+      {
+        "archivo": "bajo/clases/ejercicio-03.md",
+        "titulo": "Ejercicio 3",
+        "descripcion": "Ejercicio enviado por el profesor.",
+        "vertical": true
+      }
+    ],
     "apuntes": []
   },
   "bateria": {
     "titulo": "Batería",
     "descripcion": "Afinación del kit, clases y apuntes.",
     "clases": [],
-    "apuntes": []
+    "apuntes": [
+      {
+        "archivo": "bateria/apuntes/afinacion-bateria.md",
+        "titulo": "Afinación de batería",
+        "descripcion": "Frecuencias de lug por parche para mi kit de 12 / 16 / 22, con la nota base de cada tambor."
+      },
+      {
+        "archivo": "bateria/apuntes/conceptos-afinacion.md",
+        "titulo": "Conceptos de afinación",
+        "descripcion": "Qué es una nota y una frecuencia, la relación entre los dos parches, y por qué los toms se afinan por intervalos."
+      }
+    ]
   },
   "general": {
     "titulo": "General",
