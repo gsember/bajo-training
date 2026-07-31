@@ -161,6 +161,13 @@
     var caja = el('div', 'doc');
     caja.innerHTML = html;
 
+    /* Si el archivo arranca con un H1, es el título del documento y ya lo mostró
+       la cabecera. Se saca para no verlo dos veces. Escribirlo o no en el .md
+       da igual: el título que manda es el de contenido.json. */
+    if (caja.firstElementChild && caja.firstElementChild.tagName === 'H1') {
+      caja.removeChild(caja.firstElementChild);
+    }
+
     /* Las tablas scrollean dentro de su caja: la página nunca se va al costado. */
     Array.prototype.forEach.call(caja.querySelectorAll('table'), function (tabla) {
       var envoltorio = el('div', 'tabla-scroll');

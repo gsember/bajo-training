@@ -7,12 +7,14 @@ window.Registro = (function () {
 
   var CLAVE = 'registro-curso-v1';
 
+  /* Las cinco categorías son las que define el curso. Los descriptores de cada
+     nivel están en la tabla del markdown de la semana, arriba del registro. */
   var RUBRICA = [
-    { clave: 'tecnica', nombre: 'Técnica' },
-    { clave: 'tiempo', nombre: 'Tiempo' },
-    { clave: 'oido', nombre: 'Oído' },
-    { clave: 'lectura', nombre: 'Lectura' },
-    { clave: 'musicalidad', nombre: 'Musicalidad' }
+    { clave: 'altura', nombre: 'Altura en contexto' },
+    { clave: 'aterrizajes', nombre: 'Aterrizajes armónicos' },
+    { clave: 'economia', nombre: 'Economía de mástil' },
+    { clave: 'musicalidad', nombre: 'Musicalidad' },
+    { clave: 'lectura', nombre: 'Lectura' }
   ];
 
   var DIAS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
