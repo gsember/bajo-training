@@ -1,0 +1,32 @@
+{
+  "bajo": {
+    "titulo": "Bajo",
+    "descripcion": "Curso propio, clases del profesor, apuntes y la herramienta de lectura.",
+    "herramientas": [
+      {
+        "titulo": "Lectura de notas en clave de Fa",
+        "url": "herramientas/lectura/",
+        "meta": "5 min/día",
+        "descripcion": "Reconocimiento de notas en pentagrama, tres niveles, con sonido y registro de sesiones."
+      }
+    ],
+    "curso": {
+      "tipo": "grilla",
+      "total": 24,
+      "items": []
+    },
+    "clases": [],
+    "apuntes": []
+  },
+  "bateria": {
+    "titulo": "Batería",
+    "descripcion": "Afinación del kit, clases y apuntes.",
+    "clases": [],
+    "apuntes": []
+  },
+  "general": {
+    "titulo": "General",
+    "descripcion": "Material mezclado o sin clasificar.",
+    "notas": []
+  }
+}
