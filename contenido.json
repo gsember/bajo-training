@@ -13,7 +13,13 @@
     "curso": {
       "tipo": "grilla",
       "total": 24,
-      "items": []
+      "items": [
+        {
+          "archivo": "bajo/curso/semana-01.md",
+          "titulo": "Semana 1 — Oír la función, no buscar la nota",
+          "semana": 1
+        }
+      ]
     },
     "clases": [
       {
