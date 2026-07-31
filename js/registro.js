@@ -246,7 +246,13 @@ window.Registro = (function () {
   // ----------------------------------------------------- descarga y portapapeles
 
   function descargar(nombre, contenido, tipo) {
-    var blob = new Blob([contenido], { type: tipo + ';charset=utf-8' });
+    /* El archivo bajado son bytes pelados: el charset del blob no viaja con él.
+       Sin BOM, el editor del celular lo abre como Latin-1 y rompe los acentos.
+       En el .json no va: JSON.parse y json.load de Python se atragantan con el
+       BOM, y el .json existe justamente para leerlo de forma programática. */
+    var BOM = String.fromCharCode(0xFEFF);   // marca de UTF-8
+    var texto = (tipo === 'text/markdown' ? BOM : '') + contenido;
+    var blob = new Blob([texto], { type: tipo + ';charset=utf-8' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
